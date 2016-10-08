@@ -199,7 +199,6 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
             var login_token = JSON.parse(sessionStorage.getItem('login'));
             var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
             var project_id = JSON.parse(sessionStorage.getItem('project_id'));
-            
             var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
             $scope.getMrkvChain(part_id);
 
@@ -490,7 +489,7 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
   			$scope.customFullscreen = (wantsFullScreen === true);
   		});
   	}
-  	
+
   	//显示登出窗口
   	$scope.showLogOutDialog = function(ev){
   		var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
@@ -503,9 +502,9 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
   			fullscreen:useFullScreen,
   			locals:{$http:$http, $mdToast:$mdToast}
   		}).then(function(answer){
-  			
+
   		}, function(){
-  			
+
   		});
   		$scope.$watch(function(){
   			return $mdMedia('xs') || $mdMedia('sm');
@@ -513,7 +512,7 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
   			$scope.customFullscreen = (wantsFullScreen === true);
   		});
   	}
-  	
+
   	//显示修改密码窗口
   	$scope.showChangePasswordDialog = function(ev){
   		var useFullScreen = ($mdMedia('sm') || $mdMedia('xs')) && $scope.customFullscreen;
@@ -526,9 +525,9 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
   			fullscreen:useFullScreen,
   			locals:{$http:$http, $mdToast:$mdToast}
   		}).then(function(answer){
-  			
+
   		}, function(){
-  			
+
   		});
   		$scope.$watch(function(){
   			return $mdMedia('xs') || $mdMedia('sm');
@@ -554,15 +553,15 @@ function AddFunctionTagsCtrl($scope, $mdDialog) {
 }
 
 function LogOutCtrl($scope, $mdDialog, $http){
-	
+
 	$scope.hide = function(){
 		$mdDialog.hide();
 	}
-	
+
 	$scope.cancel = function(){
 		$mdDialog.cancel();
 	}
-	
+
 	$scope.log_out = function(){
 		var login_token = JSON.parse(sessionStorage.getItem('login'));
 		var opt = {
@@ -578,27 +577,23 @@ function LogOutCtrl($scope, $mdDialog, $http){
 				$mdDialog.hide();
 				window.location.href = "../login_register/login_register.html";
 			} else{
-				
 			}
 		});
-		
 	}
 }
 
 function ChangePasswordCtrl($scope, $mdDialog, $http, $mdToast){
-	
 	$scope.old_password = "";
 	$scope.new_password = "";
 	$scope.re_password = "";
-	
 	$scope.hide = function(){
 		$mdDialog.hide();
 	}
-	
+
 	$scope.cancel = function(){
 		$mdDialog.cancel();
 	}
-	
+
 	$scope.change_password = function(old_password,new_password,re_password){
 	 	if (old_password.length == 0 || new_password.length == 0 || re_password.length == 0) {
 		 	return;
@@ -651,7 +646,7 @@ var getToastPosition = function(){
 	return Object.keys(toastPosition)
 		.filter(function(pos) { return toastPosition[pos]; })
 		.join(' ');
-} 
+}
 
 function showToast($mdToast, msg){
 	var pinTo = getToastPosition();
@@ -661,7 +656,7 @@ function showToast($mdToast, msg){
 		.position(pinTo);
 	$mdToast.show(toast).then(function(response){
 		if(response == 'ok'){
-			
+
 		}
 	});
 }

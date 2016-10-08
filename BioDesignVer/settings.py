@@ -85,7 +85,7 @@ DATABASES = {
         'NAME': 'biodesignver',
         'USER': 'root',
         'PASSWORD': '',
-        'HOST': '192.168.0.100',
+        'HOST': '',
         'PORT': '3306',
     }
 }
