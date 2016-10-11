@@ -1,129 +1,227 @@
 <!DOCTYPE html>
-<html ng-app="bio-app">
+<html lang="en" ng-app="projectApp">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="initial-scale=1">
-	<title>BioDesigner|Project</title>
-	
-	<link rel="stylesheet" href="../public/angular-material/angular-material.css">
-	<link rel="stylesheet" href="css/docs.css">
-	<link rel="stylesheet" href="css/project_page.css">
-	
-	<!-- Favicon and touch icons -->
-    <link rel="shortcut icon" href="img/logo_black_small.png">
-</head>
-<body class="docs-body layout-row" layout="row" ng-controller="proController">
-	<!-- 侧边栏 -->
-	<div id="bio-sidebar"  layout="row">
-	  	<md-sidenav md-component-id="left" class="site-sidenav md-sidenav-left md-whiteframe-z2 hide-print md-closed ng-isolate-scope md-locked-open" md-is-locked-open="$mdMedia('gt-sm')">
-	 		<header class="nav-header">
-		      	<a href="#" ng-href="/" class="docs-logo">
-		        	<img src="img/logo_white.png">
-		        	<h1 class="docs-logotype md-heading">BioDesigner</h1>
-		      	</a>
-		    </header>
-		    <md-list layout="row" layout-wrap layout-margin layout-align="center">
-		    	<md-list layout="row">
-		    		<md-button ng-click="showNewProjectDialog($event)">
-			        	<label>New Project</label>
-			          	<md-icon md-svg-src="img/plus.svg" aria-label="add-project"></md-icon>
-			        </md-button>
-			        <span flex></span>
-			        <md-button ng-click="toggle_edit()">
-			        	Edit
-			        </md-button>
-		    	</md-list>
-		    	<md-list-item layout="column" class="ai-project-item" ng-repeat="project in project_info">
-					<div class="ai-project-item-btn" layout="row">
-						<span flex ng-click="toggle_device($index)">{{project.name}}</span>
-						<div ng-hide="!isEdit">
-							<md-button class="md-icon-button" ng-click="showNewDeviceDialog($event, project.id)" aria-label="show-new-device">
-								<md-icon md-svg-src="img/plus.svg"></md-icon>
-							</md-button>
-							<md-button class="md-icon-button" ng-click="delete_project($index, project.id)" aria-label="delete-project">
-								<md-icon md-svg-src="img/close.svg"></md-icon>
-							</md-button>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BioDesigner|Project</title>
+
+    <link href="../public/custombox/dist/custombox.min.css" rel="stylesheet">
+    <link href="../public/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../public/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+    <link href="./css/sb-admin-2.css" rel="stylesheet">
+    <link href="./bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../public/angular-material/angular-material.css" rel="stylesheet">
+    <link href="./css/project.css" rel="stylesheet"></head>
+<body>
+    <div id="wrapper" ng-controller="projectController">
+        <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">BioDesigner Coral</a>
+            </div>
+            <ul class="nav navbar-top-links navbar-right">
+                <li>
+                    <button class="btn btn-success" ng-click="jumpToProject()">Project</button>
+                </li>
+                <li>
+                    <button class="btn btn-danger" ng-click="jumpToGene()">Gene Relationship</button>
+                </li>
+                <li>
+                    <button class="btn btn-danger" ng-click="jumpToSystem()">System</button>
+                </li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#"> <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-user">
+                        <li>
+                            <a href="#" ng-click="changePasswordDialog()">
+                                <i class="fa fa-gear fa-fw"></i>
+                                ChangePassword
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a href="#" ng-click="logoutDialog()">
+                                <i class="fa fa-sign-out fa-fw"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+        <div class="container-fluid">
+        	<div class="row">
+        		<div class="col-md-2 sidebar">
+        			<ul class="nav nav-sidebar">
+                    	<li ng-repeat="project in project_info">
+	                        <a ng-click="toggle_device($index)">
+	                            <span>{{project.name}}</span>
+	                            <div class="btn-edit" ng-hide="!isEdit">
+	                                <button class="btn btn-default" aria-label="show-new-device" ng-click="showNewDeviceDialog(project.id)">
+	                                    <i class="fa fa-plus" aria-hidden="true"></i>
+	                                </button>
+	                                <button class="btn btn-danger" aria-label="delete-project" ng-click="delete_project($index,project.id)">
+	                                    <i class="fa fa-trash" aria-hidden="true"></i>
+	                                </button>
+	                            </div>
+	                        </a>
+	                        <ul class="nav nav-second-level" ng-hide="project.isDeviceShowed">
+	                            <li ng-repeat="device in project.devices">
+	                                <a ng-click="device_clicked(device.chain_id,device.chain_name,project.id,device.chain_Length)">{{device.chain_name}}</a>
+	                            </li>
+	                        </ul>
+	                    </li>
+	               	</ul>
+        		</div>
+        		<div class="col-md-8 col-md-offset-2 text-center">
+	                <img ng-src="{{device_img_src}}" alt="logo-design">
+	            </div>
+	            <div class="col-md-2 pull-right right-side-bar">
+	                <div class="panel panel-default">
+	                    <div class="panel-heading">
+	                        <h3 class="panel-title">Information</h3>
+	                    </div>
+	                    <div class="panel-body">
+	                        <h3>Device</h3>
+	                        <h4>Length:{{length}}</h4>
+	                        <button class="btn btn-success btn-block" ng-click="jumpToDesign()">Design</button>
+	                        <hr/>
+	                        <h3>Project Editor</h3>
+	                        <button class="btn btn-primary btn-block" ng-click="showNewProjectDialog()">
+		                        <i class="fa fa-plus" aria-hidden="true"></i>
+		                    </button>
+		                    <button class="btn btn-primary btn-block" ng-click="toggle_edit()">
+		                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+		                    </button>
+	                    </div>
+	                </div>
+	            </div>
+        	</div>
+        </div>
+        <!--new project modal-->
+        <div id="newPro" class="modal-demo">
+			<button type="button" class="close" onclick="Custombox.close();">
+				<span>×</span>
+				<span class="sr-only">Close</span>
+			</button>
+			<h4 class="title">New Project</h4>
+			<div class="text">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="project" class="col-xs-2 control-label">Project</label>
+						<div class="col-xs-10">
+							<input type="text" class="form-control" placeholder="project name" ng-model="new_project_name"/>
 						</div>
 					</div>
-					<md-list ng-hide="project.isDeviceShowed" class="ai-device-list" layout-padding>
-						<md-list-item class="ai-device-item" ng-repeat="device in project.devices">
-							<div ng-click="device_clicked(device.chain_id,device.chain_name,project.id,device.chain_Length)" class="ai-device-item-btn" layout="row">
-								<span flex>{{device.chain_name}}</span>
-							</div>
-							<md-divider></md-divider>
-						</md-list-item>
-					</md-list>
-					<md-divider></md-divider>
-				</md-list-item>
-	      	</md-list>
-	  	</md-sidenav>
-	</div>
-	<!-- 主窗口 -->
-  	<div id="bio-container" class="layout-column flex" layout="column">
-  		<md-toolbar class="md-whiteframe-glow-z1 site-content-toolbar">
-			<div class="md-toolbar-tools">
-				<div layout="row" class="fill-height layout-row flex">
-					<h2 class="md-toolbar-item md-breadcrumb md-headline">
-                      	<span class="md-breadcrumb-page ng-binding">{{addr + ' > ' + chain_addr}}</span>
-                    </h2>
-					<span flex></span>
-                    <div class="md-toolbar-item docs-tools layout-row" layout="row">
-                    	<md-button class="md-raised md-accent ai-gr" aria-label="Gene" ng-click="jumpToGene()">Gene Relationship</md-button>
-				      	<md-button class="md-raised md-accent ai-sr" aria-label="System" ng-click="jumpToSystem()">System</md-button>
-				       	<md-menu md-position-mode="target-right target" >
-				          	<md-button aria-label="menu" class="md-icon-button" ng-click="$mdOpenMenu($event)">
-				            	<md-icon md-menu-origin md-svg-icon="img/account.svg"></md-icon>
-				          	</md-button>
-				          	<md-menu-content width="2">
-				            	<md-menu-item>
-				              		<md-button ng-click="showChangePasswordDialog($event)">
-				                  		<div layout="row" flex>
-				                    		<p flex>Change Password</p>
-				                  		</div>
-				              		</md-button>
-				            	</md-menu-item>
-				            	<md-menu-item>
-				              		<md-button ng-click="showLogOutDialog($event)">
-				                  		<div layout="row" flex>
-				                    		<p flex>LogOut</p>
-				                  		</div>
-				              		</md-button>
-				            	</md-menu-item>
-				          	</md-menu-content>
-				        </md-menu>
-                    </div>
-				</div>
+					<div class="form-group">
+						<label for="track" class="col-xs-2 control-label">Track</label>
+						<div class="col-xs-10">
+							<select id="track" class="form-control" title="Please select a track ..." ng-model="new_project_track">
+								<option ng-repeat="track in tracks">{{track.track_name}}</option>
+							</select>
+						</div>
+					</div>
+				</form>
 			</div>
-  		</md-toolbar>
-  		<md-content class="layout-row flex" layout="row">
-			<div flex="80" class="ai-bio-main">
-				<div class="ai-logo-design">
-					<img ng-src="{{device_img_src}}" alt="logo-design">
-				</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onclick="Custombox.close();">Cancel</button>
+				<button type="button" class="btn btn-primary" ng-click="create_project(new_project_name, new_project_track)">Confirm</button>
 			</div>
-			<div flex="20" class="md-whiteframe-z2 ai-bio-side">
-				<md-card layout="column" flex layout-padding>
-					<md-card-title-text class="ai-device">
-						<h2>Device name</h2>
-					</md-card-title-text>
-					<md-card-title-text class="ai-length">
-						<h4>Length: {{length}}</h4>
-					</md-card-title-text>
-					<md-card-title-text class="ai-design" ng-click="jumpToDesign()">
-						<md-button class="md-raised md-accent">Design</md-button>
-					</md-card-title-text>
-				</md-card>
+		</div>
+		<!--new device modal-->
+        <div id="newDev" class="modal-demo">
+			<button type="button" class="close" onclick="Custombox.close();">
+				<span>×</span>
+				<span class="sr-only">Close</span>
+			</button>
+			<h4 class="title">New Device</h4>
+			<div class="text">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="device" class="col-xs-2 control-label">Device</label>
+						<div class="col-xs-10">
+							<input type="text" class="form-control" placeholder="device name" ng-model="new_device_name"/>
+						</div>
+					</div>
+				</form>
 			</div>
-  		</md-content>
-  	</div>
-
-	<script src="../public/analytics/analytics.js"></script>
-  	<script src="../public/angular/angular.js"></script>
-  	<script src="../public/angular-animate/angular-animate.js"></script>
-  	<script src="../public/angular-route/angular-route.js"></script>
-  	<script src="../public/angular-aria/angular-aria.js"></script>
-  	<script src="../public/angular-messages/angular-messages.js"></script>
-  	<script src="../public/angular-material/angular-material.js"></script>
-  	<script src="js/project_page.js"></script>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onclick="Custombox.close();">Cancel</button>
+				<button type="button" class="btn btn-primary" ng-click="create_device(new_device_name)">Confirm</button>
+			</div>
+		</div>
+		<!--log out modal-->
+        <div id="logout" class="modal-demo">
+			<button type="button" class="close" onclick="Custombox.close();">
+				<span>×</span>
+				<span class="sr-only">Close</span>
+			</button>
+			<h4 class="title">Log Out</h4>
+			<div class="text">
+				<h3>Are You Sure?</h3>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onclick="Custombox.close();">Cancel</button>
+				<button type="button" class="btn btn-primary" ng-click="log_out()">Confirm</button>
+			</div>
+		</div>
+		<!--change password modal-->
+        <div id="cgPwd" class="modal-demo">
+			<button type="button" class="close" onclick="Custombox.close();">
+				<span>×</span>
+				<span class="sr-only">Close</span>
+			</button>
+			<h4 class="title">Change Password</h4>
+			<div class="text">
+				<form class="form-horizontal" role="form">
+					<div class="form-group">
+						<label for="old password" class="col-sm-2 control-label">Old Password</label>
+						<div class="col-sm-10">
+							<input type="password" class="form-control" placeholder="old password" ng-model="old_password"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="new password" class="col-sm-2 control-label">New Password</label>
+						<div class="col-sm-10">
+							<input type="password" class="col-sm-10 form-control" placeholder="new password" ng-model="new_password"/>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="confirm password" class="col-sm-2 control-label">Confirm Password</label>
+						<div class="col-sm-10">
+							<input type="password" class="col-sm-10 form-control" placeholder="confirm password" ng-model="re_password"/>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onclick="Custombox.close();">Cancel</button>
+				<button type="button" class="btn btn-primary" ng-click="change_password(old_password,new_password,re_password)">Confirm</button>
+			</div>
+		</div>
+    </div>
+    
+    <script src="../public/analytics/analytics.js"></script>
+    <script src="../public/angular/angular.js"></script>
+    <script src="../public/angular-animate/angular-animate.js"></script>
+    <script src="../public/angular-route/angular-route.js"></script>
+    <script src="../public/angular-aria/angular-aria.js"></script>
+    <script src="../public/angular-messages/angular-messages.js"></script>
+    <script src="../public/angular-material/angular-material.js"></script>
+    <script src="../public/jquery/dist/jquery.min.js"></script>
+    <script src="../public/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="../public/bootstrap-select-1.11.2/dist/js/bootstrap-select.min.js"></script>
+    <script src="../public/metisMenu/dist/metisMenu.min.js"></script>
+    <script src="./js/sb-admin-2.js"></script>
+    <script src="./js/project_page.js"></script>
+    <script src="../public/custombox/dist/legacy.min.js"></script>
+    <script src="../public/custombox/dist/custombox.min.js"></script>
 </body>
 </html>

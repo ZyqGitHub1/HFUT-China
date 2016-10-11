@@ -22,14 +22,35 @@ function draw(dataset){
                         .attr("width", w)
                         .attr("height", h);
 
+            //Create tips window -- add by Wang_haipeng 2016_8_10 pm
+            var tooltip = d3.select("body")
+                            .append("div")
+                            .attr("class","tooltip")
+                            .style("opacity",0.0);
+
             //Create edges as lines
             var edges = svg.selectAll("line")
                 .data(dataset.edges)
                 .enter()
                 .append("line")
                 .style("stroke", "#ccc")
-                .style("stroke-width", 1);
+                .style("stroke-width", 1)
+                .on("mouseover", function(d){
+                    tooltip.html(d["target"].relations)
+                           .style("left", (d3.event.pageX) + "px")
+                           .style("top", (d3.event.pageY + 20) + "px")
+                           .style("opacity",1.0);         
+                })
+                .on("mousemove",function(d){
+                    tooltip.style("left", (d3.event.pageX) + "px")
+                           .style("top", (d3.event.pageY + 20) + "px");
+                })
+                .on("mouseout",function(d){
+                    tooltip.style("opacity",0.0);
+                });
+                            
 
+/*
             var edges_text = svg.selectAll(".linetext")
                                 .data(dataset.edges)
                                 .enter()
@@ -38,6 +59,7 @@ function draw(dataset){
                                 .text(function(d){
                                     return d.relation;
                                 });
+*/
 
             //Create labels
             var text_dx = -20;
@@ -65,6 +87,7 @@ function draw(dataset){
                 .style("fill", function(d, i) {
                     return colors(i);
                 })
+                /*
                 .on("mouseover",function(d,i){
                     edges_text.style("fill-opacity",function(edge){
                         if( edge.source === d || edge.target === d ){
@@ -79,10 +102,11 @@ function draw(dataset){
                         }
                     });
                 })
+                */
                 .on("click", function(d, i){
-                    var $scope = angular.element('#my_body').scope();
+                    var $scope = angular.element('#wrapper').scope();
                     $scope.getGeneInfo(d.id);
-                    scope.$apply();
+                    $scope.$apply();
                 })
                 .on("dblclick",function(d,i){
                     d.fixed = false;
@@ -97,15 +121,17 @@ function draw(dataset){
                     d.y = d.y + rad + text_dy > h ? h - rad - text_dy : d.y ;
                 });
                 edges.attr("x1", function(d) { return d.source.x; })
-                    .attr("y1", function(d) { return d.source.y; })
+                	.attr("y1", function(d) { return d.source.y; })
                     .attr("x2", function(d) { return d.target.x; })
                     .attr("y2", function(d) { return d.target.y; });
                 nodes.attr("cx", function(d) { return d.x; })
                     .attr("cy", function(d) { return d.y; });
                 nodes_text.attr("x",function(d){ return d.x });
                 nodes_text.attr("y",function(d){ return d.y + 10});
-            edges_text.attr("x",function(d){ return (d.source.x + d.target. x) / 2 ; });
-            edges_text.attr("y",function(d){ return (d.source.y + d.target. y) / 2 ; });
+                /*
+                edges_text.attr("x",function(d){ return (d.source.x + d.target. x) / 2 ; });
+                edges_text.attr("y",function(d){ return (d.source.y + d.target. y) / 2 ; });
+                */
             });
         }
         drawGem(dataset);

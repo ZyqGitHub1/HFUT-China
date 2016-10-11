@@ -1,33 +1,89 @@
-var editPro = angular.module('edit-app', ['ngMaterial','ng-sortable']);
+var editPro = angular.module('designApp', ['ng-sortable']);
 
-editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $http, $mdDialog, $mdToast) {
-	$scope.search_info = [];//搜索结果
-	$scope.chain_info = [];//用户编辑的基因链
-    $scope.chain_new = [];
+editPro.controller('designController', function($scope, $http) {
+	$scope.search_info = [
+		{img: '../img/DNA.png',name: 'A'},
+		{img: '../img/Device.png',name: 'B'},
+	];//搜索结果
+	$scope.chain_info = [
+		{img: '../img/DNA.png',name: '1'},
+		{img: '../img/DNA.png',name: '2'},
+		{img: '../img/DNA.png',name: '3'},
+		{img: '../img/DNA.png',name: '4'},
+		{img: '../img/DNA.png',name: '5'},
+		{img: '../img/DNA.png',name: '6'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+		{img: '../img/DNA.png',name: '7'},
+	];//用户编辑的基因链
+	
+//  $scope.chain_new = [];
+    $scope.delete_gene = [];
     $scope.recommend_info = [];
     $scope.float_right = false;
     $scope.float_left = true;
     
-    $scope.jumpToSystem = function(){
-  		window.location.href = "../system_page/system_page.html";
-  	}
+    $scope.$watchCollection("chain_info", function(newVal, oldVal, scope){
+    	var login_token = JSON.parse(sessionStorage.getItem('login'));
+		var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
+		var project_id = JSON.parse(sessionStorage.getItem('project_id'));
+		var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
+        $scope.getMrkvChain(part_id);
+    	$scope.computeBackground();
+    	var opt = {
+			url: '/design/updateChain',
+			method: 'POST',
+			data: {
+				token: login_token,
+				project_id: project_id,
+				chain_id: chain_id,
+				chain_info: newVal,
+			},
+			headers: { 'Content-Type': 'application/json'}
+		};
 
-	$scope.jumpToGene = function(){
-  		window.location.href = "../gene_page/gene_page.html";
-  	}
-	
-	$scope.jumpToProject = function(){
-  		window.location.href = "../project_page/project_page.html";
-  	}
-	
-    //拖动配置(user)
-	$scope.putConfig = {
+		$http(opt).success(function(data) {
+			if (data.successful) {
+//				showToast($mdToast,"save SUCCESS!");
+				console.log("success");
+				$scope.delete_gene = [];
+			}
+		});
+    });
+    
+    $scope.putConfig = {
 		group: {
 			name:'d_gene',
             pull:true,
             put:['s_gene','r_gene'],
 		},
+		ghostClass: "ghost",
 		animation: 150,
+<<<<<<< HEAD
 		onUpdate: function(evt) {
 			var login_token = JSON.parse(sessionStorage.getItem('login'));
 			var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
@@ -275,9 +331,11 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
                 }
             });
         },
+=======
+		handle:'.handle',
+>>>>>>> 6039d9d38226076e80a9acb631ec541fdbc818bc
 	};
-
-    //拖动配置(side)
+	
 	$scope.pullConfig = {
 		group: {
 			name:'s_gene',
@@ -286,10 +344,6 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
 		},
         sort:false,
 		animation: 150,
-        onRemove: function (evt) {
-            console.log(evt);
-            console.log(evt.newIndex);
-        },
         handle:'.handle'
 	};
 
@@ -306,18 +360,254 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
     $scope.deleteConfig = {
         group: {
             name:'delete',
-            pull:true,
+            pull:false,
             put:['d_gene'],
         },
-        sort:false,
+        sort:true,
         animation: 150,
+        onAdd: function (evt) {
+        	$scope.delete_gene = [];
+    	},
     };
+    
+    $scope.computeBackground = function(){
+  	    for (var i = 0;i < $scope.chain_info.length;i++) {
+            if ((Math.floor(i / 5) + 1) % 2 == 0) {
+                $scope.chain_info[i].float_right = true;
+                $scope.chain_info[i].float_left = false;
+                if ((i + 1) % 5 == 0) {
+                    //头
+                    $scope.chain_info[i].rb = true;
+                    $scope.chain_info[i].lt = false;
+                    $scope.chain_info[i].lb = false;
+                    $scope.chain_info[i].rt = false;
+                    $scope.chain_info[i].line = false;
+                } else if (i % 5 == 0) {
+                    //尾
+                    $scope.chain_info[i].rb = false;
+                    $scope.chain_info[i].lt = true;
+                    $scope.chain_info[i].lb = false;
+                    $scope.chain_info[i].rt = false;
+                    $scope.chain_info[i].line = false;
+                } else {
+                    //中间
+                    $scope.chain_info[i].rb = false;
+                    $scope.chain_info[i].lt = false;
+                    $scope.chain_info[i].lb = false;
+                    $scope.chain_info[i].rt = false;
+                    $scope.chain_info[i].line = true;
+                }
+            } else {
+                $scope.chain_info[i].float_right = false;
+                $scope.chain_info[i].float_left = true;
+                if ((i + 1) % 5 == 0) {
+                    //尾
+                    $scope.chain_info[i].rb = false;
+                    $scope.chain_info[i].lt = false;
+                    $scope.chain_info[i].lb = true;
+                    $scope.chain_info[i].rt = false;
+                    $scope.chain_info[i].line = false;
+                } else if (i % 5 == 0) {
+                    //头
+                    $scope.chain_info[i].rb = false;
+                    $scope.chain_info[i].lt = false;
+                    $scope.chain_info[i].lb = false;
+                    $scope.chain_info[i].rt = true;
+                    $scope.chain_info[i].line = false;
+                } else {
+                    //中间
+                    $scope.chain_info[i].rb = false;
+                    $scope.chain_info[i].lt = false;
+                    $scope.chain_info[i].lb = false;
+                    $scope.chain_info[i].rt = false;
+                    $scope.chain_info[i].line = true;
+                }
+            }
+        }
+    }
+    
+    $scope.jumpToSystem = function(){
+  		window.location.href = "../system_page/system_page.html";
+  	}
 
-
+	$scope.jumpToGene = function(){
+  		window.location.href = "../gene_page/gene_page.html";
+  	}
+	
+	$scope.jumpToProject = function(){
+  		window.location.href = "../project_page/project_page.html";
+  	}
+	//修改密码模态框
+	$scope.changePasswordDialog = function(){
+		Custombox.open({
+            target:'#cgPwd',
+            effect:'fadein',
+       	});
+	}
+	//确认修改密码
+	$scope.change_password = function(old_password,new_password,re_password){
+   	 	if (old_password.length == 0 || new_password.length == 0 || re_password.length == 0) {
+   	 		Custombox.close();
+   	 		showToast($mdToast, "Please Complete Your Info");
+   		 	return;
+   	 	} else {
+   			var login_token = JSON.parse(sessionStorage.getItem('login'));
+   			var opt = {
+   				url: '/accounts/changePassword',
+   				method: 'POST',
+   				data: JSON.stringify({
+   					token: login_token,
+   					old_password: old_password,
+   					new_password: new_password,
+   					re_password: re_password
+   				}),
+   				headers: {'Content-Type': 'application/json'}
+   			};
+   			$http(opt).success(function(data){
+   				if (data.successful) {
+   					Custombox.close();
+   					showToast($mdToast, "Password changed successfully");
+   				} else{
+   					Custombox.close();
+   					showToast($mdToast, "Password changed FAILED");
+   				}
+   			});
+   	 	}
+   	}
+	//登出模态框
+	$scope.logoutDialog = function(){
+		Custombox.open({
+            target:'#logout',
+            effect:'fadein',
+       	});
+	}
+	//确认登出
+	$scope.log_out = function(){
+   		var login_token = JSON.parse(sessionStorage.getItem('login'));
+   		var opt = {
+   			url: '/accounts/logout',
+   			method: 'POST',
+   			data: JSON.stringify({
+   				token: login_token,
+   			}),
+   			headers: {'Content-Type': 'application/json'}
+   		};
+   		$http(opt).success(function(data){
+   			if (data.successful) {
+   				Custombox.close();
+   				window.location.href = "../login_register/login_register.html";
+   			} else{
+				Custombox.close();
+				showToast($mdToast, "Something Strange Happened!!!");
+   			}
+   		});
+   	}
+    //拖动配置(user)
+//	$scope.putConfig = {
+//		group: {
+//			name:'d_gene',
+//          pull:true,
+//          put:['s_gene','r_gene'],
+//		},
+//		animation: 150,
+//		onUpdate: function(evt) {
+//			var login_token = JSON.parse(sessionStorage.getItem('login'));
+//			var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
+//			var project_id = JSON.parse(sessionStorage.getItem('project_id'));
+//			var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
+//          $scope.getMrkvChain(part_id);
+//
+// 
+//          }
+//
+//			var opt = {
+//				url: '/design/updateChain',
+//				method: 'POST',
+//				data: {
+//					token: login_token,
+//					project_id: project_id,
+//					chain_id: chain_id,
+//					chain_info: evt.models,
+//				},
+//				headers: { 'Content-Type': 'application/json'}
+//			};
+//
+//			$http(opt).success(function(data) {
+//  			if (data.successful) {
+//  				showToast($mdToast,"save SUCCESS!");
+//  			}
+//  		});
+//		},
+//      onAdd: function(evt) {
+//          console.log($scope.chain_info);
+//          var login_token = JSON.parse(sessionStorage.getItem('login'));
+//          var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
+//          var project_id = JSON.parse(sessionStorage.getItem('project_id'));
+//          var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
+//          $scope.getMrkvChain(part_id);
+//
+//          
+//          console.log(evt)
+//          $scope.chain_new.push({
+//              img: evt.model.img,
+//              name: evt.model.name,
+//              part_id: evt.model.part_id,
+//          });
+//
+//
+//          var opt = {
+//              url: '/design/updateChain',
+//              method: 'POST',
+//              data: {
+//                  token: login_token,
+//                  project_id: project_id,
+//                  chain_id: chain_id,
+//                  chain_info: $scope.chain_new,
+//              },
+//              headers: { 'Content-Type': 'application/json'}
+//          };
+//
+//          $http(opt).success(function(data) {
+//              if (data.successful) {
+//                  showToast($mdToast,"save SUCCESS!");
+//              }
+//          });
+//      },
+//      onRemove: function(evt) {
+//          console.log('aaa');
+//          console.log(evt);
+//          var login_token = JSON.parse(sessionStorage.getItem('login'));
+//          var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
+//          var project_id = JSON.parse(sessionStorage.getItem('project_id'));
+//          
+//          var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
+//          $scope.getMrkvChain(part_id);
+//
+//          $scope.chain_info.splice(evt.oldIndex,1);
+//          $scope.chain_new = $scope.chain_info.concat();
+//          
+//          var opt = {
+//              url: '/design/updateChain',
+//              method: 'POST',
+//              data: {
+//                  token: login_token,
+//                  project_id: project_id,
+//                  chain_id: chain_id,
+//                  chain_info: $scope.chain_info,
+//              },
+//              headers: { 'Content-Type': 'application/json'}
+//          };
+//
+//          $http(opt).success(function(data) {
+//              if (data.successful) {
+//                  showToast($mdToast,"save SUCCESS!");
+//              }
+//          });
+//      },
+//	};
 	//页面初始化
 	$scope.init = function(){
 		var login_token = JSON.parse(sessionStorage.getItem('login'));
-        console.log(login_token);
 		var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
 		var project_id = JSON.parse(sessionStorage.getItem('project_id'));
 		var opt = {
@@ -334,7 +624,7 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
 			if (data.successful) {
 				$scope.chain_result = data.data;
 				for (var i = 0;i < $scope.chain_result.length;i++) {
-                $scope.chain_new = $scope.chain_result.concat()
+//              	$scope.chain_new = $scope.chain_result.concat()
 					$scope.chain_info.push({
 						img: '../img/' + $scope.chain_result[i].part_type + '.png',
 						name: $scope.chain_result[i].part_name,
@@ -342,34 +632,56 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
 					});
 
                     if ((Math.floor(i / 5) + 1) % 2 == 0) {
-                        //偶数行
-                        $scope.chain_info[i].float_right = true;
-                        $scope.chain_info[i].float_left = false;
-                        if ((i + 1) % 5 == 0) {
-                            //头
-                            $scope.chain_info[i].rb = true;
-                        } else if (i % 5 == 0) {
-                            //尾
-                            $scope.chain_info[i].lt = true;
-                        } else {
-                            //中间
-                            $scope.chain_info[i].line = true;
-                        }
-                    } else {
-                        //奇数行
-                        $scope.chain_info[i].float_right = false;
-                        $scope.chain_info[i].float_left = true;
-                        if ((i + 1) % 5 == 0) {
-                            //尾
-                            $scope.chain_info[i].lb = true;
-                        } else if (i % 5 == 0) {
-                            //头
-                            $scope.chain_info[i].rt = true;
-                        } else {
-                            //中间
-                            $scope.chain_info[i].line = true;
-                        }
-                    }
+		                $scope.chain_info[i].float_right = true;
+		                $scope.chain_info[i].float_left = false;
+		                if ((i + 1) % 5 == 0) {
+		                    //头
+		                    $scope.chain_info[i].rb = true;
+		                    $scope.chain_info[i].lt = false;
+		                    $scope.chain_info[i].lb = false;
+		                    $scope.chain_info[i].rt = false;
+		                    $scope.chain_info[i].line = false;
+		                } else if (i % 5 == 0) {
+		                    //尾
+		                    $scope.chain_info[i].rb = false;
+		                    $scope.chain_info[i].lt = true;
+		                    $scope.chain_info[i].lb = false;
+		                    $scope.chain_info[i].rt = false;
+		                    $scope.chain_info[i].line = false;
+		                } else {
+		                    //中间
+		                    $scope.chain_info[i].rb = false;
+		                    $scope.chain_info[i].lt = false;
+		                    $scope.chain_info[i].lb = false;
+		                    $scope.chain_info[i].rt = false;
+		                    $scope.chain_info[i].line = true;
+		                }
+		            } else {
+		                $scope.chain_info[i].float_right = false;
+		                $scope.chain_info[i].float_left = true;
+		                if ((i + 1) % 5 == 0) {
+		                    //尾
+		                    $scope.chain_info[i].rb = false;
+		                    $scope.chain_info[i].lt = false;
+		                    $scope.chain_info[i].lb = true;
+		                    $scope.chain_info[i].rt = false;
+		                    $scope.chain_info[i].line = false;
+		                } else if (i % 5 == 0) {
+		                    //头
+		                    $scope.chain_info[i].rb = false;
+		                    $scope.chain_info[i].lt = false;
+		                    $scope.chain_info[i].lb = false;
+		                    $scope.chain_info[i].rt = true;
+		                    $scope.chain_info[i].line = false;
+		                } else {
+		                    //中间
+		                    $scope.chain_info[i].rb = false;
+		                    $scope.chain_info[i].lt = false;
+		                    $scope.chain_info[i].lb = false;
+		                    $scope.chain_info[i].rt = false;
+		                    $scope.chain_info[i].line = true;
+		                }
+		            }
 				}
 			}
 		});
@@ -403,7 +715,6 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
 	}
 	
 	$scope.search_by_keyboard = function($event,key_word){
-		console.log('aaa');
       	if($event.keyCode == 13) {//回车
           	$scope.getSearchResult(key_word);
       	}
@@ -462,12 +773,8 @@ editPro.controller('designController', function($scope, $mdSidenav, $mdMedia, $h
 		});
   	}
 
-	//侧边栏方法
-  	$scope.openLeftMenu = function() {
-    	$mdSidenav('left').toggle();
-  	};
-
   	$scope.init();
+<<<<<<< HEAD
 
   	//添加功能标签按钮事件方法
   	$scope.showAddFunctionTagsDialog = function(ev){
@@ -623,9 +930,13 @@ function ChangePasswordCtrl($scope, $mdDialog, $http, $mdToast){
 	}
 }
 
+=======
+});
+
+>>>>>>> 6039d9d38226076e80a9acb631ec541fdbc818bc
 var last = {
-	bottom: false,
-	top: true,
+	bottom: true,
+	top: false,
 	left: false,
 	right: true
 };

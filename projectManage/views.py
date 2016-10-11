@@ -7,6 +7,7 @@
 
 from django.shortcuts import render
 from models import *
+from geneRelationship.models import Gene
 from accounts.models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
@@ -103,7 +104,9 @@ def createNewProject(request):
 		except:
 			raise myError('Please Log In.')
 		project_name = data['project_name']
-		track = Tracks.objects.filter(id=data['track']).first()
+		if not project_name:
+			raise myError('Project_name can\'t be null.' )
+		track = Tracks.objects.filter(track=data['track']).first()
 		# function = Functions.objects.filter(function=data['function']),first()
 		project = Project()
 		project.creator = user
@@ -291,6 +294,8 @@ def createProjectDevice(request):
 		project = Project.objects.filter(id=project_id).first()
 		if user != project.creator:
 			raise myError('Create Failed.')
+		if not data['device_name']:
+			raise myError('Devicee_name can\'t be Null.' )
 		chain = Chain()
 		chain.name = data['device_name']
 		chain.project = project
@@ -334,7 +339,8 @@ def deleteProjectDevice(request):
 		if user != project.creator:
 			raise myError('Delete Failed.')
 		chain = Chain()
-		chain = chain
+		chain = Chain.object.filter(chain_id=data['chain_id']).first()
+		chain.delete()
 		result = {
 			'successful': True,
 			'error': {

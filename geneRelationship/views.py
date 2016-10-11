@@ -5,7 +5,8 @@ from accounts.models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from utils.functionTools.generalFunction import noneIfEmptyString,noneIfNoKey,myError
-from search_relation import search_relation, search_genes
+from search_relation import search_relation, search_genes, search_papers, search_one_sentence, search_three_sentence
+from system.gene import get_gene_info
 import json
 import string
 import random
@@ -25,15 +26,18 @@ def randomGene(request):
 		gene_list = json.loads(gene_file.read())
 		gene_name = random.choice(gene_list)
 		search_result = search_relation(gene_name)
-		if len(search_result['children']) > 20:
-			search_result['children'] = search_result['children'][:20]
+		if len(search_result['children']) > 10:
+			search_result['children'] = search_result['children'][:10]
 		for gene in search_result['children']:
 			gene_name = gene['name']
 			temp_result = search_relation(gene_name)
-			if len(temp_result['children']) > 20:
-				gene['children'] = temp_result['children'][:20]
+			if len(temp_result['children']) > 10:
+				gene['children'] = temp_result['children'][:10]
 			else:
 				gene['children'] = temp_result['children']
+		gene_json = open('gene.json', 'w')
+		gene_json.write(json.dumps(search_result))
+		gene_json.close()
 		result = {
 			'successful': True,
 			'data': search_result,
@@ -59,6 +63,8 @@ def randomGene(request):
 			}
 		}
 	finally:
+		with open('data.json', 'wb') as out_put:
+			out_put.write(json.dumps(result))
 		return HttpResponse(json.dumps(result), content_type='application/json')
 		with open('data.json','wb') as out_put:
 			out_put.write(json.dumps(result))
@@ -110,7 +116,9 @@ def getGeneInfo(request):
 			user = token.user
 		except:
 			raise myError('Please Log In.')
-		gene_id = data['gene_id']
+		gene_name = data['gene_name']
+		gene = Gene.objects.filter(name=gene_name).first()
+		gene_id = gene.gene_id
 		get_result = get_gene_info(gene_id)
 		result = {
 			'successful': get_result[0],
@@ -150,10 +158,126 @@ def getRelatedGene(request):
 		gene_name = data['gene_name']
 		realated_gene_list = []
 		realated_genes = search_relation(gene_name)
+		if realated_genes['children'] > 10:
+			realated_genes['children'] = realated_genes['children'][:10]
 		print realated_genes
 		result = {
 			'successful': True,
 			'data': realated_genes,
+			'error': {
+				'id': '',
+				'msg': '',
+			},
+		}
+	except myError, e:
+		result = {
+			'successful': False,
+			'error': {
+				'id': '3',
+				'msg': e.value,
+			}
+		}
+	except Exception,e:
+		result = {
+			'successful': False,
+			'error': {
+				'id': '1024',
+				'msg': e.args
+			}
+		}
+	finally:
+		return HttpResponse(json.dumps(result), content_type='application/json')
+
+def getRelatedPaper(request):
+	try:
+		data = json.loads(request.body)
+		try:
+			token = Token.objects.filter(token=data['token']).first()
+			user = token.user
+		except:
+			raise myError('Please Log In.')
+		gene_name = data['gene_name']
+		realated_paper_list = search_papers(gene_name)
+		print realated_paper_list
+		result = {
+			'successful': True,
+			'data': realated_paper_list,
+			'error': {
+				'id': '',
+				'msg': '',
+			},
+		}
+	except myError, e:
+		result = {
+			'successful': False,
+			'error': {
+				'id': '3',
+				'msg': e.value,
+			}
+		}
+	except Exception,e:
+		result = {
+			'successful': False,
+			'error': {
+				'id': '1024',
+				'msg': e.args
+			}
+		}
+	finally:
+		return HttpResponse(json.dumps(result), content_type='application/json')
+
+def getOneSentence(request):
+	try:
+		data = json.loads(request.body)
+		try:
+			token = Token.objects.filter(token=data['token']).first()
+			user = token.user
+		except:
+			raise myError('Please Log In.')
+		gene_name_one = data['source_name']
+		gene_name_two = data['target_name']
+		sentenceList = search_one_sentence(gene_name_one,gene_name_two)
+		result = {
+			'successful': True,
+			'data': sentenceList,
+			'error': {
+				'id': '',
+				'msg': '',
+			},
+		}
+	except myError, e:
+		result = {
+			'successful': False,
+			'error': {
+				'id': '3',
+				'msg': e.value,
+			}
+		}
+	except Exception,e:
+		result = {
+			'successful': False,
+			'error': {
+				'id': '1024',
+				'msg': e.args
+			}
+		}
+	finally:
+		return HttpResponse(json.dumps(result), content_type='application/json')
+
+def getThreeSentences(request):
+	try:
+		data = json.loads(request.body)
+		try:
+			token = Token.objects.filter(token=data['token']).first()
+			user = token.user
+		except:
+			raise myError('Please Log In.')
+		gene_name_one = data['source_name']
+		gene_name_two = data['target_name']
+		sentenceList = search_three_sentence(gene_name_one,gene_name_two)
+		result = {
+			'successful': True,
+			'data': sentenceList,
 			'error': {
 				'id': '',
 				'msg': '',

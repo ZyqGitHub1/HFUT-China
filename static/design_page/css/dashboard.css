@@ -4,6 +4,7 @@
 #dashboard{
     list-style: none;
     overflow :auto;
+    float: left;
 }
 #dashboard div{
     cursor: move;
@@ -32,9 +33,14 @@
     overflow :auto;
 }
 #clipboard{
+    border-left:double #ff0000;
     background:url('../img/ljt.JPG') no-repeat;
     background-size:100%;
     background-position: center;
+}
+
+#clipboard div{
+    // display:none;
 }
 
 .pull_left{
