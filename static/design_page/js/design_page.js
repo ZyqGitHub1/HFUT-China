@@ -1,58 +1,46 @@
-var editPro = angular.module('designApp', ['ng-sortable']);
+var editPro = angular.module('designApp', ['ngMaterial','ngAnimate','ng-sortable']);
 
-editPro.controller('designController', function($scope, $http) {
-	$scope.search_info = [
-		{img: '../img/DNA.png',name: 'A'},
-		{img: '../img/Device.png',name: 'B'},
-	];//搜索结果
-	$scope.chain_info = [
-		{img: '../img/DNA.png',name: '1'},
-		{img: '../img/DNA.png',name: '2'},
-		{img: '../img/DNA.png',name: '3'},
-		{img: '../img/DNA.png',name: '4'},
-		{img: '../img/DNA.png',name: '5'},
-		{img: '../img/DNA.png',name: '6'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-		{img: '../img/DNA.png',name: '7'},
-	];//用户编辑的基因链
-	
-//  $scope.chain_new = [];
+editPro.controller('designController', function($scope, $http, $location, $mdToast) {
+	$scope.search_info = [];//搜索结果
+	$scope.chain_info = [];//用户编辑的基因链
     $scope.delete_gene = [];
-    $scope.recommend_info = [];
+    $scope.recommend_info = {
+    	front: [],
+    	back: [],
+    	middle: [],
+    };
     $scope.float_right = false;
     $scope.float_left = true;
+    
+    $scope.sb = true;//默认展示后面的基因
+    $scope.sm = false;//中间的markv
+    $scope.sf = false;//后面的markv
+    
+    $scope.show_front = function(){
+    	$scope.sf = true;
+	    $scope.sm = false;
+	    $scope.sb = false;
+    };
+    
+    $scope.show_middle = function(){
+    	$scope.sf = false;
+	    $scope.sm = true;
+	    $scope.sb = false;
+    };
+    
+    $scope.show_back = function(){
+    	$scope.sf = false;
+	    $scope.sm = false;
+	    $scope.sb = true;
+    };
     
     $scope.$watchCollection("chain_info", function(newVal, oldVal, scope){
     	var login_token = JSON.parse(sessionStorage.getItem('login'));
 		var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
 		var project_id = JSON.parse(sessionStorage.getItem('project_id'));
-		var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
-        $scope.getMrkvChain(part_id);
+		var part_id = $scope.chain_info[newVal.length - 1].part_id;
+		var part_id_before = $scope.chain_info[newVal.length - 2].part_id;
+        $scope.getMrkvChain(part_id_before, part_id);
     	$scope.computeBackground();
     	var opt = {
 			url: '/design/updateChain',
@@ -69,7 +57,6 @@ editPro.controller('designController', function($scope, $http) {
 		$http(opt).success(function(data) {
 			if (data.successful) {
 //				showToast($mdToast,"save SUCCESS!");
-				console.log("success");
 				$scope.delete_gene = [];
 			}
 		});
@@ -502,109 +489,6 @@ editPro.controller('designController', function($scope, $http) {
    			}
    		});
    	}
-    //拖动配置(user)
-//	$scope.putConfig = {
-//		group: {
-//			name:'d_gene',
-//          pull:true,
-//          put:['s_gene','r_gene'],
-//		},
-//		animation: 150,
-//		onUpdate: function(evt) {
-//			var login_token = JSON.parse(sessionStorage.getItem('login'));
-//			var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
-//			var project_id = JSON.parse(sessionStorage.getItem('project_id'));
-//			var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
-//          $scope.getMrkvChain(part_id);
-//
-// 
-//          }
-//
-//			var opt = {
-//				url: '/design/updateChain',
-//				method: 'POST',
-//				data: {
-//					token: login_token,
-//					project_id: project_id,
-//					chain_id: chain_id,
-//					chain_info: evt.models,
-//				},
-//				headers: { 'Content-Type': 'application/json'}
-//			};
-//
-//			$http(opt).success(function(data) {
-//  			if (data.successful) {
-//  				showToast($mdToast,"save SUCCESS!");
-//  			}
-//  		});
-//		},
-//      onAdd: function(evt) {
-//          console.log($scope.chain_info);
-//          var login_token = JSON.parse(sessionStorage.getItem('login'));
-//          var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
-//          var project_id = JSON.parse(sessionStorage.getItem('project_id'));
-//          var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
-//          $scope.getMrkvChain(part_id);
-//
-//          
-//          console.log(evt)
-//          $scope.chain_new.push({
-//              img: evt.model.img,
-//              name: evt.model.name,
-//              part_id: evt.model.part_id,
-//          });
-//
-//
-//          var opt = {
-//              url: '/design/updateChain',
-//              method: 'POST',
-//              data: {
-//                  token: login_token,
-//                  project_id: project_id,
-//                  chain_id: chain_id,
-//                  chain_info: $scope.chain_new,
-//              },
-//              headers: { 'Content-Type': 'application/json'}
-//          };
-//
-//          $http(opt).success(function(data) {
-//              if (data.successful) {
-//                  showToast($mdToast,"save SUCCESS!");
-//              }
-//          });
-//      },
-//      onRemove: function(evt) {
-//          console.log('aaa');
-//          console.log(evt);
-//          var login_token = JSON.parse(sessionStorage.getItem('login'));
-//          var chain_id = JSON.parse(sessionStorage.getItem('chain_id'));
-//          var project_id = JSON.parse(sessionStorage.getItem('project_id'));
-//          
-//          var part_id = $scope.chain_info[$scope.chain_info.length - 1].part_id;
-//          $scope.getMrkvChain(part_id);
-//
-//          $scope.chain_info.splice(evt.oldIndex,1);
-//          $scope.chain_new = $scope.chain_info.concat();
-//          
-//          var opt = {
-//              url: '/design/updateChain',
-//              method: 'POST',
-//              data: {
-//                  token: login_token,
-//                  project_id: project_id,
-//                  chain_id: chain_id,
-//                  chain_info: $scope.chain_info,
-//              },
-//              headers: { 'Content-Type': 'application/json'}
-//          };
-//
-//          $http(opt).success(function(data) {
-//              if (data.successful) {
-//                  showToast($mdToast,"save SUCCESS!");
-//              }
-//          });
-//      },
-//	};
 	//页面初始化
 	$scope.init = function(){
 		var login_token = JSON.parse(sessionStorage.getItem('login'));
@@ -624,7 +508,6 @@ editPro.controller('designController', function($scope, $http) {
 			if (data.successful) {
 				$scope.chain_result = data.data;
 				for (var i = 0;i < $scope.chain_result.length;i++) {
-//              	$scope.chain_new = $scope.chain_result.concat()
 					$scope.chain_info.push({
 						img: '../img/' + $scope.chain_result[i].part_type + '.png',
 						name: $scope.chain_result[i].part_name,
@@ -721,30 +604,53 @@ editPro.controller('designController', function($scope, $http) {
   	};
   	
   	//获得马尔科夫链
-  	$scope.getMrkvChain = function(part_id){
+  	$scope.getMrkvChain = function(part_id_before, part_id){
   		var login_token = JSON.parse(sessionStorage.getItem('login'));
   		var opt = {
 			url: '/design/getMRecommend',
 			method: 'POST',
 			data: {
 				token: login_token,
+				part_id_before: part_id_before,
 				part_id: part_id
 			},
 			headers: { 'Content-Type': 'application/json'}
 		};
 		$http(opt).success(function(data){
 			if(data.successful){
-				var recommend_result = data.data;
-                console.log(recommend_result)
-                $scope.recommend_info = [];
-				for (var i = 0;i < recommend_result.length;i++) 
-					for (var j = 0;j < recommend_result[i].length;j++){
-						$scope.recommend_info.push({
-							img: '../img/' + recommend_result[i][j].part_type + '.png',
-							name: recommend_result[i][j].part_name,
-							part_id: recommend_result[i][j].part_id,
+				
+                $scope.recommend_info.front = [];
+                $scope.recommend_info.middle = [];
+                $scope.recommend_info.back = [];
+                data.data.recommend_list_front.forEach(function(r){
+                	r.forEach(function(x){
+                		$scope.recommend_info.front.push({
+							img: '../img/' + x.part_type + '.png',
+							name: x.part_name,
+							part_id: x.part_id,
 						});
-					}
+                	});
+            	});
+            	
+            	data.data.recommend_list_middle.forEach(function(r){
+                	r.forEach(function(x){
+                		$scope.recommend_info.middle.push({
+							img: '../img/' + x.part_type + '.png',
+							name: x.part_name,
+							part_id: x.part_id,
+						});
+                	});
+            	});
+            	
+            	data.data.recommend_list_back.forEach(function(r){
+                	r.forEach(function(x){
+                		$scope.recommend_info.back.push({
+							img: '../img/' + x.part_type + '.png',
+							name: x.part_name,
+							part_id: x.part_id,
+						});
+                	});
+            	});
 			}
 		});
   	};

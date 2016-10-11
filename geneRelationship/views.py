@@ -5,7 +5,7 @@ from accounts.models import *
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
 from utils.functionTools.generalFunction import noneIfEmptyString,noneIfNoKey,myError
-from search_relation import search_relation, search_genes, search_papers, search_one_sentence, search_three_sentence
+from search_relation import search_relation, search_genes, search_papers, search_one_sentence, search_three_sentence, search_related_disease
 from system.gene import get_gene_info
 import json
 import string
@@ -27,11 +27,13 @@ def randomGene(request):
 		gene_name = random.choice(gene_list)
 		search_result = search_relation(gene_name)
 		if len(search_result['children']) > 10:
-			search_result['children'] = search_result['children'][:10]
+			search_result['children'].sort(key=lambda d:float(d['relations']), reverse=True)
+		search_result['children'] = search_result['children'][:10]
 		for gene in search_result['children']:
 			gene_name = gene['name']
 			temp_result = search_relation(gene_name)
 			if len(temp_result['children']) > 10:
+				temp_result['children'].sort(key=lambda d:float(d['relations']), reverse=True)
 				gene['children'] = temp_result['children'][:10]
 			else:
 				gene['children'] = temp_result['children']
@@ -159,8 +161,8 @@ def getRelatedGene(request):
 		realated_gene_list = []
 		realated_genes = search_relation(gene_name)
 		if realated_genes['children'] > 10:
-			realated_genes['children'] = realated_genes['children'][:10]
-		print realated_genes
+			realated_genes['children'].sort(key=lambda d:float(d['relations']), reverse=True)
+		realated_genes['children'] = realated_genes['children'][:10]
 		result = {
 			'successful': True,
 			'data': realated_genes,
@@ -197,11 +199,25 @@ def getRelatedPaper(request):
 		except:
 			raise myError('Please Log In.')
 		gene_name = data['gene_name']
-		realated_paper_list = search_papers(gene_name)
-		print realated_paper_list
+		related_paper_list = search_papers(gene_name)
+		# realated_paper_list = [[{'id': 12345, 'paper_id': '123', 'paper_title':"123", 
+		# 						'paper_link':'fsd', 'paper_keyword': 'test', 'paper_abstract': 'haha'},
+		# 						{'id': 23456, 'paper_id': '123', 'paper_title':"hahah", 
+		# 						'paper_link':'fsd', 'paper_keyword': 'test', 'paper_abstract': 'haha'},
+		# 						{'id': 34567, 'paper_id': '123', 'paper_title':"hahah", 
+		# 						'paper_link':'fsd', 'paper_keyword': 'test', 'paper_abstract': 'haha'},
+		# 						{'id': 45678, 'paper_id': '123', 'paper_title':"hahah", 
+		# 						'paper_link':'fsd', 'paper_keyword': 'test', 'paper_abstract': 'haha'},], 
+		# 						[{'id': 56789, 'paper_id': '123', 'paper_title':"hahah", 
+		# 						'paper_link':'fsd', 'paper_keyword': 'test', 'paper_abstract': 'haha'},
+		# 						{'id': 67890, 'paper_id': '123', 'paper_title':"hahah", 
+		# 						'paper_link':'fsd', 'paper_keyword': 'test', 'paper_abstract': 'haha'},
+		# 						{'id': 78901, 'paper_id': '123', 'paper_title':"hahah", 
+		# 						'paper_link':'fsd', 'paper_keyword': 'test', 'paper_abstract': 'haha'},]
+		# 						]
 		result = {
 			'successful': True,
-			'data': realated_paper_list,
+			'data': related_paper_list,
 			'error': {
 				'id': '',
 				'msg': '',
@@ -278,6 +294,43 @@ def getThreeSentences(request):
 		result = {
 			'successful': True,
 			'data': sentenceList,
+			'error': {
+				'id': '',
+				'msg': '',
+			},
+		}
+	except myError, e:
+		result = {
+			'successful': False,
+			'error': {
+				'id': '3',
+				'msg': e.value,
+			}
+		}
+	except Exception,e:
+		result = {
+			'successful': False,
+			'error': {
+				'id': '1024',
+				'msg': e.args
+			}
+		}
+	finally:
+		return HttpResponse(json.dumps(result), content_type='application/json')
+
+def getRelatedDisease(request):
+	try:
+		data = json.loads(request.body)
+		try:
+			token = Token.objects.filter(token=data['token']).first()
+			user = token.user
+		except:
+			raise myError('Please Log In.')
+		gene_name = data['gene_name']
+		realated_disease_list = search_related_disease(gene_name)
+		result = {
+			'successful': True,
+			'data': realated_disease_list,
 			'error': {
 				'id': '',
 				'msg': '',

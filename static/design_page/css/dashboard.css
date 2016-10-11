@@ -1,10 +1,6 @@
-.info{
-    display:inline-block;
-}
 #dashboard{
     list-style: none;
     overflow :auto;
-    float: left;
 }
 #dashboard div{
     cursor: move;
@@ -13,6 +9,20 @@
     text-align: center;
 }
 
+.rmdBtn{
+    position: fixed;
+    height: 25px;
+    background: #f8f8f8;
+}
+
+.recommendMain{
+    margin-top: 25px;
+    padding: 0;
+}
+
+.recommendMain li{
+    list-style-type:none;
+}
 
 #dashboard div span{
     display:block;
@@ -21,26 +31,21 @@
 #dashboard div img{
     margin-top: 10%;
 }
-
-#dashboard div md-divider{
-    display: none;
-}
 .search_item{
     cursor: move;
 }
 #recommend{
-    margin-left: 5px;
     overflow :auto;
 }
 #clipboard{
-    border-left:double #ff0000;
-    background:url('../img/ljt.JPG') no-repeat;
-    background-size:100%;
-    background-position: center;
+    background: url('../img/trashcan.jpg');
+    background-size: 100%;
+	height: 270px;
 }
 
-#clipboard div{
-    // display:none;
+#clipboard img{
+	height: 100%;
+    width: 100%;
 }
 
 .pull_left{
@@ -56,27 +61,27 @@
 }
 
 .line{
-    background:url('../img/x_bg.png');
+    background:url('../img/x_bg.png') no-repeat;
     background-size:100%;
 }
 
 .rt{
-    background:url('../img/rt_bg.png');
+    background:url('../img/rt_bg.png') no-repeat;
     background-size:100%;
 }
 
 .rb{
-    background:url('../img/rb_bg.png');
+    background:url('../img/rb_bg.png') no-repeat;
     background-size:100%;
 }
 
 .lt{
-    background:url('../img/lt_bg.png');
+    background:url('../img/lt_bg.png') no-repeat;
     background-size:100%;
 }
 
 .lb{
-    background:url('../img/lb_bg.png');
+    background:url('../img/lb_bg.png') no-repeat;
     background-size:100%;
 }
 
@@ -99,4 +104,9 @@
 
 #info_card{
     overflow :auto;
+}
+
+.selectGeneInfo{
+    max-height: 380px;
+    overflow: auto;
 }

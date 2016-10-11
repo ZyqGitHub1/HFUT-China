@@ -7,6 +7,19 @@ gi.controller('geneInfoController',function($scope, $http){
 	$scope.gene_definition = "";
 	$scope.gene_url = "";
 	$scope.gene_info = [];
+	$scope.disease_info = [];
+	$scope.showRa = true;//默认显示文献
+	$scope.showD = false;
+	
+	$scope.show_ra = function(){
+		$scope.showRa = true;
+		$scope.showD = false;
+	}
+	
+	$scope.show_d = function(){
+		$scope.showRa = false;
+		$scope.showD = true;
+	}
 	
 	$scope.jumpToSystem = function(){
   		window.location.href = "../system_page/system_page.html";
@@ -105,7 +118,7 @@ gi.controller('geneInfoController',function($scope, $http){
 				$scope.gene_url = data.data.gene_url;
 			}
 		});
-
+		//获取文献
 		var opt = {
 			url: '/geneRelationship/getRelatedPaper',
 			method: 'POST',
@@ -118,19 +131,40 @@ gi.controller('geneInfoController',function($scope, $http){
 		$http(opt).success(function(data){
 			if(data.successful){
 				data.data.forEach(function(r, index) {
-					if(!r.paper_keyword.length)
-						r.paper_keyword = 'None';
+					r.forEach(function(x, index1) {
+						if(!x.paper_keyword.length)
+							x.paper_keyword = 'None';
+					})
 					$scope.gene_info.push({
 						index: index,
-						paper_title: r.paper_title,
-						paper_link: r.paper_link,
-						paper_keyword: r.paper_keyword,
-						paper_abstract: r.paper_abstract,
-					})
+						paper: r,
+					});
 				});
 			}
 		});
-		
+		//获取疾病
+		var opt = {
+			url: '/geneRelationship/getRelatedDisease',
+			method: 'POST',
+			data: {
+				token: login_token,
+				gene_name: gene_name,
+			},
+			headers: { 'Content-Type': 'application/json'}
+		};
+		$http(opt).success(function(data){
+			if(data.successful){
+				data.data.forEach(function(d, index){
+					$scope.disease_info.push({
+						index: index,
+						paper_url: d.paper_url,
+						disease_class: d.disease_class,
+						disease_name: d.disease_name,
+					});
+				});
+			}
+		});
+		//绘图
 		var opt = {
 			url: '/geneRelationship/getRelatedGene',
 			method: 'POST',

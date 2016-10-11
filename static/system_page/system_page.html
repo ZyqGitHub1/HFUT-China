@@ -10,6 +10,7 @@
     <link href="../public/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="../public/angular-material/angular-material.css" rel="stylesheet">
     <link href="../public/ng-tags-input.min/ng-tags-input.min.css" rel="stylesheet">
+    <link href="../public/shCircleLoader-master/jquery.shCircleLoader.css" rel="stylesheet">
     <link href="./css/sb-admin-2.css" rel="stylesheet">   
     <link href="./css/system.css" rel="stylesheet">
 	<link href="./bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet">
@@ -29,6 +30,9 @@
             </div>
             <!-- /.navbar-header -->
             <ul class="nav navbar-top-links navbar-right">
+            	<li class="compound_tags">
+            		<tags-input ng-model="compound_tags1"></tags-input>
+            	</li>
                 <li>
                     <button class="btn btn-danger" ng-click="jumpToProject()">Project</button>
                 </li>
@@ -65,7 +69,6 @@
 	            </button>
 	            <button class="btn btn-success" ng-click="runCompoundTags()">Run</button>
 	            <button class="btn btn-danger" ng-click="removeAllCompoundTags()">Remove All</button>
-	            <tags-input ng-model="compound_tags1"></tags-input>
             </form>
         </nav>
         <div class="container-fluid">
@@ -88,7 +91,7 @@
         			</div>
         		</div>
         		<div class="col-md-2">
-        			<div class="panel panel-default" ng-hide="{{message_show}}">
+        			<div class="panel panel-default" ng-hide="message_show">
                         <div class="panel-heading">
                             <h3 class="panel-title">Message</h3>
                         </div>
@@ -101,7 +104,7 @@
                             <h4>Formula:{{formula}}</h4>
                         </div>
                     </div>
-                    <div class="panel panel-default" ng-hide="{{gene_message_show}}">
+                    <div class="panel panel-default" ng-hide="gene_message_show">
                         <div class="panel-heading">
                             <h3 class="panel-title">Gene Message</h3>
                         </div>
@@ -180,8 +183,9 @@
     <script src="../public/angular-material/angular-material.js"></script>
     <script src="../public/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../public/ng-tags-input.min/ng-tags-input.min.js"></script>
-    <script src="./js/sb-admin-2.js"></script>
+    <script src="../public/shCircleLoader-master/jquery.shCircleLoader-min.js"></script>
     <script src="../public/d3/d3.min.js"></script>
+    <script src="./js/sb-admin-2.js"></script>
     <script src="./js/system_page.js"></script>
     <script src="./js/draw.js"></script>
 </body>

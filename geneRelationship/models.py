@@ -28,6 +28,7 @@ class Paper_Gene(models.Model):
     paper_abstract = models.TextField()
     paper_link = models.CharField(max_length=255)
     gene = models.ForeignKey(Gene)
+    paper_class = models.IntegerField(default=-1)
 
     def __unicode__(self):
         return self.paper_id
@@ -59,3 +60,15 @@ class Three_KeySentence(models.Model):
 
     class Meta:
         db_table = 'bio_three_keysentence'
+
+class Gene_Disease(models.Model):
+    gene_name = models.CharField(max_length=64)
+    disease_name = models.CharField(max_length=64)
+    disease_class = models.CharField(max_length=64)
+    paper_id = models.IntegerField()
+
+    def __unicode__(self):
+        return self.gene_name
+
+    class Meta:
+        db_table = 'bio_gene_disease'
