@@ -8,8 +8,7 @@
 
     <link href="../public/custombox/dist/custombox.min.css" rel="stylesheet"> 
     <link href="../public/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../public/angular-material/angular-material.css" rel="stylesheet">
-    <link href="../public/ng-tags-input.min/ng-tags-input.min.css" rel="stylesheet">
+    <link href="../public/angular-material/angular-material.min.css" rel="stylesheet">
     <link href="../public/shCircleLoader-master/jquery.shCircleLoader.css" rel="stylesheet">
     <link href="./css/sb-admin-2.css" rel="stylesheet">   
     <link href="./css/system.css" rel="stylesheet">
@@ -30,9 +29,6 @@
             </div>
             <!-- /.navbar-header -->
             <ul class="nav navbar-top-links navbar-right">
-            	<li class="compound_tags">
-            		<tags-input ng-model="compound_tags1"></tags-input>
-            	</li>
                 <li>
                     <button class="btn btn-danger" ng-click="jumpToProject()">Project</button>
                 </li>
@@ -67,8 +63,8 @@
             	<button class="btn btn-default" type="button" ng-click="getCompoundResult(key_word)">
 	                <i class="fa fa-search"></i>
 	            </button>
-	            <button class="btn btn-success" ng-click="runCompoundTags()">Run</button>
-	            <button class="btn btn-danger" ng-click="removeAllCompoundTags()">Remove All</button>
+	            <button class="btn btn-success" type="button" ng-click="runCompoundTags()">Run</button>
+        		<button class="btn btn-primary" type="button" ng-click="tagsDialog()">Your Tags</button>
             </form>
         </nav>
         <div class="container-fluid">
@@ -120,6 +116,26 @@
         	</div>
         </div>
         
+        <!--tags modal-->
+	    <div id="tags" class="modal-demo">
+			<button type="button" class="close" onclick="Custombox.close();">
+				<span>×</span>
+				<span class="sr-only">Close</span>
+			</button>
+			<h4 class="title">Your Tags</h4>
+			<div class="text">
+				<p ng-hide="!(compound_tags.length == 0)"><strong>You hava no tags now ^_^,please chose your tags,haha.</strong></p>
+				<md-chips ng-model="compound_tags" readonly="false" ng-hide="compound_tags.length == 0">
+		        	<md-chip-template>
+		          		<strong>{{$chip.name}}</strong>
+	        		</md-chip-template>
+		      	</md-chips>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" onclick="Custombox.close();">Cancel</button>
+				<button type="button" class="btn btn-danger" ng-click="removeAllCompoundTags()">RemoveAll</button>
+			</div>
+		</div>
         <!--log out modal-->
 	    <div id="logout" class="modal-demo">
 			<button type="button" class="close" onclick="Custombox.close();">
@@ -174,18 +190,13 @@
     <script src="../public/custombox/dist/legacy.min.js"></script>
     <script src="../public/custombox/dist/custombox.min.js"></script> 
     <script src="../public/jquery/dist/jquery.min.js"></script>
-    <script src="../public/analytics/analytics.js"></script>
-    <script src="../public/angular/angular.js"></script>
-    <script src="../public/angular-animate/angular-animate.js"></script>
-    <script src="../public/angular-route/angular-route.js"></script>
-    <script src="../public/angular-aria/angular-aria.js"></script>
-    <script src="../public/angular-messages/angular-messages.js"></script>
-    <script src="../public/angular-material/angular-material.js"></script>
+    <script src="../public/angular/angular.min.js"></script>
+    <script src="../public/angular-animate/angular-animate.min.js"></script>
+    <script src="../public/angular-aria/angular-aria.min.js"></script>
+    <script src="../public/angular-material/angular-material.min.js"></script>
     <script src="../public/bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../public/ng-tags-input.min/ng-tags-input.min.js"></script>
     <script src="../public/shCircleLoader-master/jquery.shCircleLoader-min.js"></script>
     <script src="../public/d3/d3.min.js"></script>
-    <script src="./js/sb-admin-2.js"></script>
     <script src="./js/system_page.js"></script>
     <script src="./js/draw.js"></script>
 </body>

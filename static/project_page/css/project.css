@@ -47,5 +47,29 @@
     right: 15px;
 }
 .btn-edit{
-    float: right;
+	position: relative;
+	float: right;
+    display: inline-block;
+    top:-6px;
+}
+.dev-edit{
+	position: relative;
+	display: inline-block;
+	float: right;
+	top: -20px;
+	z-index: 2;
+}
+.chainName{
+	max-width: 150px;
+	width:150px;
+	overflow: hidden;
+}
+.sideBarUl{
+	position: relative;
+	display: block;
+	padding: 10px 15px;
+}
+.sideBarClick{
+	position: relative;
+	height: 40px;
 }
