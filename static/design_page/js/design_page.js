@@ -345,6 +345,7 @@ editPro.controller('designController', function($scope, $http, $location, $mdToa
         },
         sort:false,
         animation: 150,
+        handle:'.handle',
     };
 
     $scope.deleteConfig = {
@@ -634,7 +635,7 @@ editPro.controller('designController', function($scope, $http, $location, $mdToa
 						});
                 	});
             	});
-            	
+
             	data.data.recommend_list_middle.forEach(function(r){
                 	r.forEach(function(x){
                 		$scope.recommend_info.middle.push({
