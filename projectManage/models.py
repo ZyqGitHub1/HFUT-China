@@ -43,7 +43,6 @@ class Parts(models.Model):
 		return self.part_name
 
 	class Meta:
-		managed = False
 		db_table = 'bio_parts'
 
 class Part_Parameters(models.Model):
@@ -52,7 +51,6 @@ class Part_Parameters(models.Model):
     value = models.CharField(max_length=256)
 
     class Meta:
-        managed = False
         db_table = 'bio_part_parameters'
 
 class Part_Twins(models.Model):
@@ -60,7 +58,6 @@ class Part_Twins(models.Model):
 	part_2 = models.ForeignKey(Parts, related_name='FK_PART_TWIN2', db_column='part_2_id')
 
 	class Meta:
-		managed = False
 		db_table = 'bio_part_twins'
 
 class Features(models.Model):
@@ -72,7 +69,6 @@ class Features(models.Model):
 	endpos = models.IntegerField(null=True)
 	
 	class Meta:
-		managed = False
 		db_table = 'bio_features'
 
 class Part_Features(models.Model):
@@ -80,7 +76,6 @@ class Part_Features(models.Model):
 	Feature = models.ForeignKey(Features)
 
 	class Meta:
-		managed = False
 		db_table = 'bio_part_features'
 
 class Tracks(models.Model):
@@ -90,7 +85,6 @@ class Tracks(models.Model):
 		return self.track
 
 	class Meta:
-		managed = False
 		db_table = 'bio_tracks'
 
 class Functions(models.Model):
@@ -100,7 +94,6 @@ class Functions(models.Model):
 		return self.function
 
 	class Meta:
-		managed = False
 		db_table = 'bio_functions'
 
 class Project(models.Model):
@@ -114,7 +107,6 @@ class Project(models.Model):
 		return self.project_name
 
 	class Meta:
-		managed = False
 		db_table = 'bio_project'
 
 class Chain(models.Model):
@@ -127,7 +119,6 @@ class Chain(models.Model):
 		return self.sequence
 
 	class Meta:
-		managed = False
 		db_table = 'bio_chain'
 
 class Track_Functions(models.Model):
@@ -138,7 +129,6 @@ class Track_Functions(models.Model):
 		return '%s %s' % (self.track, self.function)
 
 	class Meta:
-		managed = False
 		db_table = 'bio_track_function'
 
 
@@ -153,7 +143,6 @@ class Teams(models.Model):
 		return self.team_name
 
 	class Meta:
-		managed = False
 		db_table = 'bio_team'
 
 class Team_Parts(models.Model):
@@ -164,7 +153,6 @@ class Team_Parts(models.Model):
 		return self.team.team_name
 
 	class Meta:
-		managed = False
 		db_table = 'bio_team_parts'
 
 class Paper(models.Model):
@@ -176,7 +164,6 @@ class Paper(models.Model):
 		return self.paper_name
 
 	class Meta:
-		managed = False
 		db_table = 'bio_paper'
 
 class Part_Papers(models.Model):
@@ -186,7 +173,6 @@ class Part_Papers(models.Model):
 		return self.part.part_name + ' ' + self.paper.paper_name
 
 	class Meta:
-		managed = False
 		db_table = 'bio_part_papers'
 
 class Compound(models.Model):
@@ -201,7 +187,6 @@ class Compound(models.Model):
         return self.name
 
     class Meta:
-    	managed = False
         db_table = 'bio_compound' 
 
 class Reaction(models.Model):
@@ -214,7 +199,6 @@ class Reaction(models.Model):
         return self.name
 
     class Meta:
-    	managed = False
         db_table = 'bio_reactions' 
 
 class Reaction_Compound(models.Model):
@@ -228,7 +212,6 @@ class Reaction_Compound(models.Model):
         return self.reaction_id
 
     class Meta:
-    	managed = False
         db_table = 'bio_reaction_compounds' 
 
 class Compound_Gene(models.Model):
@@ -239,7 +222,6 @@ class Compound_Gene(models.Model):
         return self.compound.id
 
     class Meta:
-    	managed = False
         db_table = 'bio_compound_gene'
 
 class Part_Gene(models.Model):
@@ -251,7 +233,6 @@ class Part_Gene(models.Model):
         return self.score
 
     class Meta:
-    	managed = False
         db_table = 'bio_part_gene'
 
 class Organism(models.Model):
@@ -263,7 +244,6 @@ class Organism(models.Model):
         return self.organism_short
 
     class Meta:
-    	managed = False
         db_table = 'bio_organism'
 
 class Pathway(models.Model):
@@ -275,7 +255,6 @@ class Pathway(models.Model):
         return self.pathway_name
 
     class Meta:
-    	managed = False
         db_table = 'bio_pathway'
 
 class Pathway_Compound(models.Model):
@@ -287,5 +266,4 @@ class Pathway_Compound(models.Model):
         return self.pathway.pathway_name
 
     class Meta:
-    	managed = False
         db_table = 'bio_pathway_compound'
