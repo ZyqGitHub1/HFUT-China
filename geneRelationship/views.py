@@ -63,9 +63,6 @@ def randomGene(request):
 		}
 	finally:
 		return HttpResponse(json.dumps(result), content_type='application/json')
-		with open('data.json','wb') as out_put:
-			out_put.write(json.dumps(result))
-
 
 def searchGenes(request):
 	try:

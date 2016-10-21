@@ -9,11 +9,15 @@ db = client['biodesignver']
 collection = db['biodesignver']
 
 def search_relation(key_word):
-	search_result = collection.find_one({"main_gene":key_word })
-	gene_realation = {}
-	gene_realation['name'] = search_result['main_gene']
-	gene_realation['children'] = search_result['related_gene']
-	return gene_realation 
+	try:
+		search_result = collection.find_one({"main_gene":key_word })
+		gene_realation = {}
+		gene_realation['name'] = search_result['main_gene']
+		gene_realation['children'] = search_result['related_gene']
+		return gene_realation 
+	except:
+		return None
+
 
 def search_genes(key_word):
 	query_body = {
@@ -27,15 +31,19 @@ def search_genes(key_word):
 			}
 		}
 	}
-	es = Elasticsearch()
-	es_result = es.search(index="biodesigners", doc_type="genes", body=query_body)
-	hits = es_result['hits']['hits']
-	for item in hits:
-		hits = sorted(hits, key = lambda x:x['_score'], reverse = True)
-	result = []
-	for hit in hits:
-		result.append(hit['_source']['name'])
-	return result
+	try:
+		es = Elasticsearch()
+		es_result = es.search(index="biodesigners", doc_type="genes", body=query_body)
+		hits = es_result['hits']['hits']
+		for item in hits:
+			hits = sorted(hits, key = lambda x:x['_score'], reverse = True)
+		result = []
+		for hit in hits:
+			result.append(hit['_source']['name'])
+		return result
+	except:
+		return None
+		
 def search_papers(gene_name):
 	gene = Gene.objects.filter(name=gene_name).first()
 	papers = Paper_Gene.objects.filter(gene=gene).order_by('paper_class')
