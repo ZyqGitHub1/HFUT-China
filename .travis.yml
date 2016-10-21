@@ -1,0 +1,23 @@
+language: python
+python:
+  - "2.7"
+services: mysql
+
+env:
+  - DJANGO_VERSION=1.9
+
+# command to install dependencies
+install:
+  - pip install Django==$DJANGO_VERSION
+  - pip install mysql-python
+  - pip install elasticsearch
+  - pip install Pillow
+  - pip install coveralls
+  - pip install pymongo
+
+# command to run test
+script: 
+  - coverage run --source=design,system,geneRelationship manage.py test
+after_success:
+  - coveralls
+ 
